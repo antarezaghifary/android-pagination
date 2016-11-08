@@ -6,9 +6,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.suleiman.pagination.models.TopRatedMovies;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.suleiman.pagination.models.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,23 +28,24 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
+    private static final String BASE_URL_IMG = "https://image.tmdb.org/t/p/w150";
 
-    private List<TopRatedMovies> topRatedMoviesList;
+    private List<Result> movieResults;
     private Context context;
 
     private boolean isLoadingAdded = false;
 
     public PaginationAdapter(Context context) {
         this.context = context;
-        topRatedMoviesList = new ArrayList<>();
+        movieResults = new ArrayList<>();
     }
 
-    public List<TopRatedMovies> getMovies() {
-        return topRatedMoviesList;
+    public List<Result> getMovies() {
+        return movieResults;
     }
 
-    public void setMovies(List<TopRatedMovies> topRatedMoviesList) {
-        this.topRatedMoviesList = topRatedMoviesList;
+    public void setMovies(List<Result> movieResults) {
+        this.movieResults = movieResults;
     }
 
     @Override
@@ -68,14 +76,52 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        TopRatedMovies topRatedMovies = topRatedMoviesList.get(position);
+        Result result = movieResults.get(position); // Movie
 
         switch (getItemViewType(position)) {
             case ITEM:
-                MovieVH movieVH = (MovieVH) holder;
+                final MovieVH movieVH = (MovieVH) holder;
 
-//                movieVH.textView.setText(topRatedMoviesList.getTitle());
+                movieVH.mMovieTitle.setText(result.getTitle());
+
+
+                movieVH.mYear.setText(
+                        result.getReleaseDate().substring(0, 4)  // we want the year only
+                                + " | "
+                                + result.getOriginalLanguage().toUpperCase()
+                );
+                movieVH.mMovieDesc.setText(result.getOverview());
+
+                /**
+                 * Using Glide to handle image loading.
+                 * Learn more about Glide here:
+                 * <a href="http://blog.grafixartist.com/image-gallery-app-android-studio-1-4-glide/" />
+                 */
+                Glide
+                        .with(context)
+                        .load(BASE_URL_IMG + result.getPosterPath())
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                // TODO: 08/11/16 handle failure
+                                movieVH.mProgress.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                // image ready, hide progress now
+                                movieVH.mProgress.setVisibility(View.GONE);
+                                return false;   // return false if you want Glide to handle everything else.
+                            }
+                        })
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)   // cache both original & resized image
+                        .centerCrop()
+                        .crossFade()
+                        .into(movieVH.mPosterImg);
+
                 break;
+
             case LOADING:
 //                Do nothing
                 break;
@@ -85,34 +131,35 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return topRatedMoviesList == null ? 0 : topRatedMoviesList.size();
+        return movieResults == null ? 0 : movieResults.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == topRatedMoviesList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == movieResults.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
+
 
     /*
    Helpers
    _________________________________________________________________________________________________
     */
 
-    public void add(TopRatedMovies mc) {
-        topRatedMoviesList.add(mc);
-        notifyItemInserted(topRatedMoviesList.size() - 1);
+    public void add(Result r) {
+        movieResults.add(r);
+        notifyItemInserted(movieResults.size() - 1);
     }
 
-    public void addAll(List<TopRatedMovies> topRatedMoviesList) {
-        for (TopRatedMovies topRatedMovies : topRatedMoviesList) {
-            add(topRatedMovies);
+    public void addAll(List<Result> moveResults) {
+        for (Result result : moveResults) {
+            add(result);
         }
     }
 
-    public void remove(TopRatedMovies topRatedMovies) {
-        int position = topRatedMoviesList.indexOf(topRatedMovies);
+    public void remove(Result r) {
+        int position = movieResults.indexOf(r);
         if (position > -1) {
-            topRatedMoviesList.remove(position);
+            movieResults.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -131,23 +178,23 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new TopRatedMovies());
+        add(new Result());
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = topRatedMoviesList.size() - 1;
-        TopRatedMovies topRatedMovies = getItem(position);
+        int position = movieResults.size() - 1;
+        Result result = getItem(position);
 
-        if (topRatedMovies != null) {
-            topRatedMoviesList.remove(position);
+        if (result != null) {
+            movieResults.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public TopRatedMovies getItem(int position) {
-        return topRatedMoviesList.get(position);
+    public Result getItem(int position) {
+        return movieResults.get(position);
     }
 
 
@@ -160,12 +207,20 @@ public class PaginationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
      * Main list's content ViewHolder
      */
     protected class MovieVH extends RecyclerView.ViewHolder {
-        private TextView textView;
+        private TextView mMovieTitle;
+        private TextView mMovieDesc;
+        private TextView mYear; // displays "year | language"
+        private ImageView mPosterImg;
+        private ProgressBar mProgress;
 
         public MovieVH(View itemView) {
             super(itemView);
 
-            textView = (TextView) itemView.findViewById(R.id.item_text);
+            mMovieTitle = (TextView) itemView.findViewById(R.id.movie_title);
+            mMovieDesc = (TextView) itemView.findViewById(R.id.movie_desc);
+            mYear = (TextView) itemView.findViewById(R.id.movie_year);
+            mPosterImg = (ImageView) itemView.findViewById(R.id.movie_poster);
+            mProgress = (ProgressBar) itemView.findViewById(R.id.movie_progress);
         }
     }
 
