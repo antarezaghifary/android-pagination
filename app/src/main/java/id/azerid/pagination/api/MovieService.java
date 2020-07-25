@@ -1,7 +1,7 @@
-package com.suleiman.pagination.api;
+package id.azerid.pagination.api;
 
 
-import com.suleiman.pagination.models.TopRatedMovies;
+import id.azerid.pagination.models.TopRatedMovies;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

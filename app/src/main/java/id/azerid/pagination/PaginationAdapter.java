@@ -1,4 +1,4 @@
-package com.suleiman.pagination;
+package id.azerid.pagination;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -18,10 +18,12 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.suleiman.pagination.models.Result;
-import com.suleiman.pagination.utils.GlideApp;
-import com.suleiman.pagination.utils.GlideRequest;
-import com.suleiman.pagination.utils.PaginationAdapterCallback;
+import com.suleiman.pagination.R;
+
+import id.azerid.pagination.models.Result;
+import id.azerid.pagination.utils.GlideApp;
+import id.azerid.pagination.utils.GlideRequest;
+import id.azerid.pagination.utils.PaginationAdapterCallback;
 
 import java.util.ArrayList;
 import java.util.List;

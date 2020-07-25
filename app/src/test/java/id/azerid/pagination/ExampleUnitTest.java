@@ -1,4 +1,4 @@
-package com.suleiman.pagination;
+package id.azerid.pagination;
 
 import org.junit.Test;
 

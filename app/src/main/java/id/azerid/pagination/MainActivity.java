@@ -1,4 +1,4 @@
-package com.suleiman.pagination;
+package id.azerid.pagination;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -18,12 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.suleiman.pagination.api.MovieApi;
-import com.suleiman.pagination.api.MovieService;
-import com.suleiman.pagination.models.Result;
-import com.suleiman.pagination.models.TopRatedMovies;
-import com.suleiman.pagination.utils.PaginationAdapterCallback;
-import com.suleiman.pagination.utils.PaginationScrollListener;
+import com.suleiman.pagination.R;
+
+import id.azerid.pagination.api.MovieApi;
+import id.azerid.pagination.api.MovieService;
+import id.azerid.pagination.models.Result;
+import id.azerid.pagination.models.TopRatedMovies;
+import id.azerid.pagination.utils.PaginationAdapterCallback;
+import id.azerid.pagination.utils.PaginationScrollListener;
 
 import java.util.List;
 import java.util.concurrent.TimeoutException;

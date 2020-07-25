@@ -1,4 +1,4 @@
-package com.suleiman.pagination.utils;
+package id.azerid.pagination.utils;
 
 /**
  * Created by Suleiman on 16/11/16.

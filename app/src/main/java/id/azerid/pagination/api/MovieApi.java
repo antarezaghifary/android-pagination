@@ -1,8 +1,8 @@
-package com.suleiman.pagination.api;
+package id.azerid.pagination.api;
 
 import android.content.Context;
 
-import com.suleiman.pagination.utils.NetworkUtil;
+import id.azerid.pagination.utils.NetworkUtil;
 
 import okhttp3.Cache;
 import okhttp3.Interceptor;

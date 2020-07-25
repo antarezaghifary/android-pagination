@@ -1,4 +1,4 @@
-package com.suleiman.pagination.utils;
+package id.azerid.pagination.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
